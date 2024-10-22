@@ -28,6 +28,7 @@ def graine(): # mieux que "random.seed ()"
     g = g + int(secondes)
     g = g + random.randint(100,940)  # nouvelle graine pour chaque appel à f° mélange ; issue du hasard de la f°
                                             # graine + randint entre 101 et 999
+
     return g
 
 def tirage_gagnant():   # _______Tirage gagnant___________________________
@@ -38,7 +39,7 @@ def tirage_gagnant():   # _______Tirage gagnant___________________________
     g = 0  # graine
     # n = []
     secondes = []
-    g = graine()
+    g = graine() # Ici on crée la graine
     for i in range(1, 51):  # Liste ordonnée de 1 à l
         boules.append(i)  # Ajout de la valeur de i en position i de la liste
     # 12 étoiles
@@ -94,10 +95,11 @@ def tirage_gagnant():   # _______Tirage gagnant___________________________
 
 
 def melange(nom, nb, g):  # Fonction 3 paramètres nom= de la liste nb= 5 ou 2 étoiles, retourne une liste triée n
+    # print(g) # ici test qui montre que g est égal à 1 à partir du 2nd tirage
     # Cette f° mélange g fois la liste en parametre "nom", puis retourne dans n les nb premieres valeurs, 5 ou 2,
     n = []
-    # g = g + graine1
-    # print ("Randomisé", (g),"fois pour le tirage",txt)
+    # g modifié à 1 dans la fonction "debut" pour aller plus vite
+    # print ("Randomisé", (g),"fois pour le tirage")
     for i in range(1, g + 1):
         random.shuffle(nom)  # Mélange de la liste graine fois
         # print (nom) # cf console pour verification
@@ -108,7 +110,7 @@ def melange(nom, nb, g):  # Fonction 3 paramètres nom= de la liste nb= 5 ou 2 �
 
 
 
-# __________________________________________Funct° Timer  à supprimer_______________________
+# ________________Funct° Timer  à revoir ne sert plus qu'a calculer le temps écoulé______________________
 def updateTime():
     global str_time
     now = default_timer() - start
@@ -119,7 +121,7 @@ def updateTime():
     # fen.after(1000, updateTime) # Ici on affiche
 
 
-# __________________________________________Funct° action _______________________
+# _______________________________Funct° action => get le Nb de tirages que l'utilisateur veut tenter_______________________
 def action(envent):
     # nb_get = tkinter.IntVar()
     global N
@@ -146,6 +148,8 @@ def debut():
 # _________________________________________Ici on vient d'afficher le tirage gagnant CAD
 # ______ 2 listes : boules_5 et etoiles_2 copiées dans 2 ensembles e_boules_5 et e_etoiles_2
     # def les_jeux_sont_faits():
+    g = 1 # On ne melange plus qu'une seule fois pour aller plus vite
+    # avant > à 2 ou 3 mn pour 10 000 tirages puis avec g = 1 à 0 sec !!!
     gains_totaux = 0  # init
     compteur = N # N = le Nb de tirages pour tenter de gagner, compteur = les resultats perdants
     for i in range(1, N + 1):  # Construction de N grilles de 5 boules et 2 étoiles d'un hypothétique joueur
@@ -164,7 +168,7 @@ def debut():
         # print ("tirage:", (i), e_tirages, "étoiles ", e_etoile) # REM les ensembles ne peuvent pas être triés
         # print ("tirage:", (i), tirages, "étoiles ", etoile)
         # __________________________Ici on a 4 listes et 4 ensembles identiques entre eux_________
-        # _____________________Je crée une suite de conditions pour vérifier les gagnant que je rangerai dans un tabeau
+        # _____________________Je crée une suite de conditions "case" pour vérifier les gagnant que je rangerai dans un tableau
         # la fonction 'intersection' entre 2 ensembles retoune combien et quels sont les boules et/ou étoiles identiques
         # _______________________________________________________________________________________
 
@@ -292,8 +296,11 @@ def debut():
     # date = (str(date[2]) + "/" + str(date[1]) + "/" + str(date[0]) + " à " + str(date[3]) + "H " + str(date[4]) + "mn " + str(date[5]) + "sec")
     date = Label(fen, text="Calculs réalisés en : " + tmps_calc, font=("Arial Black", 11), bg="#374C9D", fg='white')  # date heure mn s
     date.place(x=28, y=710)
-
+    # % tages
     # print("Fin de Match/Case ", compteur, "Tirages gagnants sur", N) # Test
+    date = time.localtime()
+    date = datetime.datetime.now().strftime("le %d-%m-%Y à %H:%M:%S")
+    print("Fin du PRG", date)
 
     #______________________________Et maintenant on  affiche pour sauvegarder écran_____________________________________
     Valider = tkinter.Button(fen, text="Sauvegarder une\ncopie d'écran", font=("Arial Black", 11), bg="#374C9D", fg="aqua", command=copie_ecran)
@@ -307,8 +314,8 @@ def debut():
 def copie_ecran (): # Eventuellement utiliser option r"/à@ etc...." pour le chemin => "E:\Euromillions\ScreenShoot_Resultats"
     date = []
     date = time.localtime()
-    nom_screenshot = ("Screenshots/" +  str(date[0]) + "-" + str(date[1]) + "-" + str(date[2]) + "_" + str(date[3]) +  str(date[4]) + str(date[5]) +format_integer(str(N)) + "_tirages.jpg")
-    # print(nom_screenshot) test
+    nom_screenshot = ("Screenshots/" +  str(date[0]) + "-" + str(date[1]) + "-" + str(date[2]) + "_" + str(date[3]) +  str(date[4]) + str(date[5]) +"_"+ format_integer(str(N)) + "_tirages.jpg")
+    # print(nom_screenshot) # test
 
     reg_ghlh = ("1010", "100", "794", "900") # reg = region pour la copie ghlh=>pour=>gauche haut largeur hauteur
     screen = pyautogui.screenshot(region=(int(reg_ghlh[0]),int(reg_ghlh[1]),int(reg_ghlh[2]),int(reg_ghlh[3])))
@@ -480,7 +487,7 @@ txt_explicatif = ("Bienvenu dans ce PRG qui simule des tirages d'Euromillion.\nI
                   "puis 2 N° étoiles compris entre 1 et 12\nCe tirage est considéré comme la grille gagnante.\nLe PRG procède ensuite à un nombre"
                   " de tirages que vous aurez décidé.\n"
                   "Ces tirages à 2.50€ chacun visent à s'approcher du tirage initial, jusqu'au nombre que vous avez choisi.\n"
-                  "Pour 10 000 essais la durée des calcules est d'environ 1mn 30s.\nVous avez une chance de gagner sur 139 838 160"
+                  "Pour 10 000 000 d'essais la durée des calculs est d'environ 4mn.\nVous avez une chance de gagner sur 139 838 160"
                   "\nsoit une probabilité de 0,00000000715 de ganger le gros lot.")
 txt = Label(fen, text = txt_explicatif, font=("Arial Black", 10, "italic"), bg="white", fg='#374C9D' )
 txt.place(x = 10, y = 750)
@@ -498,7 +505,7 @@ for i in range(0, 15):  # Nb de lignes pour les grilles
 lblNombre = tkinter.Label(fen, text="Entrez le Nb de tirages\nque vous voulez tenter : ", font=("Arial Black", 10), bg="#374C9D", fg='white' )
 lblNombre.place(x=220, y=2)
 nb_get = Entry(fen, width = 15, font=("Arial Black", 10), bg="white", fg='#374C9D') # minvalue= 1, maxvalue = 50 ne marche pas
-nb_get.insert(0,"10_000") # 10000= val par Default txt value 9 999 999 max taille du champs TENTER avec SPINBOX ou un OBSEVER
+nb_get.insert(0,"10_000_000") # 10000= val par Default txt value 9 999 999 max taille du champs TENTER avec SPINBOX ou un OBSEVER
 nb_get.place(x=245, y=48)
 
 fen.bind("<Return>", action)
