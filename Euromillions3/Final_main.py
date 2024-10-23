@@ -98,6 +98,7 @@ def melange(nom, nb, g):  # Fonction 3 paramètres nom= de la liste nb= 5 ou 2 �
     # print(g) # ici test qui montre que g est égal à 1 à partir du 2nd tirage
     # Cette f° mélange g fois la liste en parametre "nom", puis retourne dans n les nb premieres valeurs, 5 ou 2,
     n = []
+
     # g modifié à 1 dans la fonction "debut" pour aller plus vite
     # print ("Randomisé", (g),"fois pour le tirage")
     for i in range(1, g + 1):
@@ -139,6 +140,7 @@ def action(envent):
 
     debut()
 def debut():
+
     # tirage_gagnant()
     # global boules_5, etoiles_2, e_boules_5, e_etoile_2
     global compteur, e_tirages, e_boules_5, e_etoile_2my
@@ -148,6 +150,8 @@ def debut():
 # _________________________________________Ici on vient d'afficher le tirage gagnant CAD
 # ______ 2 listes : boules_5 et etoiles_2 copiées dans 2 ensembles e_boules_5 et e_etoiles_2
     # def les_jeux_sont_faits():
+    # g = random.randint(1,9)  #
+    # print("Randomisé", (g), "fois pour le tirage")
     g = 1 # On ne melange plus qu'une seule fois pour aller plus vite
     # avant > à 2 ou 3 mn pour 10 000 tirages puis avec g = 1 à 0 sec !!!
     gains_totaux = 0  # init
@@ -237,7 +241,7 @@ def debut():
         #     # time.sleep(5)
         resultat = b_resultat + e_resultat
         # print("resultat :", resultat)
-        if resultat < 12 or resultat == 20: # C'est perdu
+        if resultat < 12 :# or resultat == 20: # C'est perdu
             compteur -= 1  # On soustrait 1 au Nb de tirages = Nb de tirages gagnants
             # print(boules_5,etoiles_2)
             # print("Perdu < 12 ou ==20 : ", resultat)
@@ -256,12 +260,19 @@ def debut():
             # print("The index of element " + str(resultat) + " is ", result_lst[0].index(resultat))
             # print("The index of element " + str(resultat) + " is ", result_lst[1].index(resultat))
     # print(result_lst[1])
+    #*************************************************************************************************
+    #                             AFFICHAGE DES RESULTATS DANS fen                                   *
+    #*************************************************************************************************
+    #                         colonne 0 => le nb de grilles gagnantes                                *
+    #*************************************************************************************************
     for i in range(0,15) : # Nb de lignes pour les résultats
         gagne = format_integer(str(result_lst[1][i]))
-        coord_xy = tkinter.Label(fen, text=gagne, font=("arial black", 11), fg="#374C9D")
-        coord_xy.place(x= calcule_x(0,gagne,9.5), y=ytuple[i])  # 128 = colonne 0
+        coord_xy = tkinter.Label(fen, text=gagne, font=("arial black", 10), fg="#374C9D")
+        coord_xy.place(x= calcule_x(0,gagne,7.5), y=ytuple[i])  # 128 = colonne 0
         # coord_xy.place(x = 128, y = ytuple[i]) # 128 = colonne 0
-    # _________________Affichage des gains pour une grille gagnante____________________________
+        #*********************************************************************************************
+        #               Affichage des gains pour une grille gagnante                                 *
+        #               colonne 5 => GAINS CUMULES = nb grilles X gains par grille gagnante (colonne 3)
     for i in range(0, 15):  # Nb de lignes pour les grilles
         gain = (gain_par_grille[0][i] * result_lst[1][i]) # Le gain par grille * par le nb de grilles gagnées
         gains_totaux = gains_totaux + gain # tester ce calcul !!!
@@ -269,18 +280,26 @@ def debut():
         # Ici on formate la chaine pour rendre plus lisibles les milliars ha !! ha!!
         gain = format_float(str(gain))
         gain = gain + "€"
-        coord_xy = tkinter.Label(fen, text = gain, font=("arial black", 11), fg="#374C9D") # "%.2f" % Formate fload 2 décimales
-        coord_xy.place(x=calcule_x(5,gain + "€",9.5), y=ytuple[i])  # 640 = dernière colonne
+        coord_xy = tkinter.Label(fen, text = gain, font=("arial black", 10), fg="#374C9D") # "%.2f" % Formate fload 2 décimales
+        coord_xy.place(x=calcule_x(5,gain + "€",7.5), y=ytuple[i])  # 640 = dernière colonne
         # coord_xy.place(x=640, y=ytuple[i])  # 640 = dernière colonne
 
     mise_initiale = N*2.5 # 2.5 euros par grille
     # test
     # les variables affichées ci-dessous sont formatées par les f° format_float ou format_integer suivant leur type
     # l'intruction ("%.2f" % variable_float) complete les décimales des float qui ne s'affichent qu'avec .0 et non .00 et c'est un grand mystère....
-    info_label = tkinter.Label(fen, text= format_integer(str(compteur)) + " Tirages gagnants et " + format_integer(str(N-compteur))
-                + " tirages perdants sur : "
-                  + format_integer(str(N))+ " tirages au total\n" + "Soit " + format_float(str("%.2f" % gains_totaux)) +" € de gagnés"
-                " pour une mise initiale de : " + format_float(str("%.2f" % mise_initiale)) +" €", font=("arial black", 12), fg="#374C9D")
+
+    info_label = tkinter.Label(fen, text=format_integer(str(compteur)) + " => "+  str("%.2f" % (compteur/N*100)) +
+        "% de Tirages gagnants pour " + format_integer(
+        str(N - compteur)) + " tirages perdants sur : " + format_integer(
+        str(N)) + " tirages au total\n" + "Soit " + format_float(
+        str("%.2f" % gains_totaux)) + " € de gagnés pour une mise initiale de : " + format_float(
+        str("%.2f" % mise_initiale)) + " €\n"+ "Donc nous avons gagné " + str(round((gains_totaux/mise_initiale),3)) + "€ pour 1€ investi...", font=("arial black", 10), fg="#374C9D")
+
+    # info_label = tkinter.Label(fen, text= format_integer(str(compteur)) + " Tirages gagnants et " + format_integer(str(N-compteur))
+    #             + " tirages perdants sur : "
+    #               + format_integer(str(N))+ " tirages au total\n" + "Soit " + format_float(str("%.2f" % gains_totaux)) +" € de gagnés"
+    #             " pour une mise initiale de : " + format_float(str("%.2f" % mise_initiale)) +" €", font=("arial black", 10), fg="#374C9D")
     info_label.place( x= 28, y = 655)
 
     # date = time.localtime()
@@ -294,8 +313,8 @@ def debut():
     tmps_calc = tmps_calc.replace(":", "min ", 1) # tjs 1ere occurence de : remplacé par min
     tmps_calc = tmps_calc.replace(".", "s", 1) # remplace le point par secondes
     # date = (str(date[2]) + "/" + str(date[1]) + "/" + str(date[0]) + " à " + str(date[3]) + "H " + str(date[4]) + "mn " + str(date[5]) + "sec")
-    date = Label(fen, text="Calculs réalisés en : " + tmps_calc, font=("Arial Black", 11), bg="#374C9D", fg='white')  # date heure mn s
-    date.place(x=28, y=710)
+    date = Label(fen, text="Calculs réalisés en : " + tmps_calc, font=("Arial Black", 9), bg="#374C9D", fg='white')  # date heure mn s
+    date.place(x=28, y=729)
     # % tages
     # print("Fin de Match/Case ", compteur, "Tirages gagnants sur", N) # Test
     date = time.localtime()
@@ -303,12 +322,14 @@ def debut():
     print("Fin du PRG", date)
 
     #______________________________Et maintenant on  affiche pour sauvegarder écran_____________________________________
-    Valider = tkinter.Button(fen, text="Sauvegarder une\ncopie d'écran", font=("Arial Black", 11), bg="#374C9D", fg="aqua", command=copie_ecran)
-    Valider.place_configure(x=xtuple[5], y=710, width=150, height=50)
+    Valider = tkinter.Button(fen, text="Sauvegarder une\ncopie d'écran", font=("Arial Black", 8), bg="#374C9D", fg="aqua", command=copie_ecran)
+    Valider.place_configure(x=xtuple[5]+45, y=849, width=110, height=50)
     # _________________Ici on ouvre un message BOX pour informer de la fin du PRG_________________
     showinfo("                             Fin du PRG", "        Euromillions Release 1.0\nBuild platform: 64-bit x86 Windows\n    Written using PyCham 2024.2.3\n© 2024-C4P Cr0CH37. All rights reserved.")
 #_____________________________________Copie d'écran dans le Rep. Screenshots du dossier en cours_______________________________________
 # crée un fichier unique du type 10 000_tirages du 2024-10-18_22_44_21.jpg
+# Copie une zone  de 'lécran ("1010", "100", "794", "900") donc ne pas faire glisser la fenêtre des resultats
+# avant d'avoir fait la copie
 #____________________________date et heure du jour + Nb de tirages______+extension .jpg_____________
 
 def copie_ecran (): # Eventuellement utiliser option r"/à@ etc...." pour le chemin => "E:\Euromillions\ScreenShoot_Resultats"
@@ -336,10 +357,10 @@ def coor_aff(): # Ici on stoke dans deux tuples xtuple, ytuple les coordonnées 
     # valeur de resultat (ex: 32 =3 boules + 2 étoiles) à placer dans la colonne 0 cad 128
     # en fonction du rang dans result_tuple on trouve la ligne par ex: si result 52=rang 0 alors ligne 176 = rang 0 de ytuple
     ytuple = (176,208,240,272,303,335,368,399,430,461,493,525,557,589,620,655) # coordonnées des 16 lignes de l'axe des Data des Lignes Boules & étoiles
-    xtuple = (128,218,322,394,543,640) # idem pour les Colonnes
+    xtuple = (128,218,322,394,543,632) # 640 idem pour les Colonnes
     #__________________________Valeurs auxilières de correction et de calcul_________________________________
-    ztuple = (9,29,49,59,69,79,79,79,79,89,89,89,89,89,89) # Aligne les val ds la colonne 3 => xtuple[405] à D pour les gains par grille
-    larg_col_tuple = (80,94,71,135,85,140) # Largeur des col pour placer le txt (80,94,71,139,85,125)
+    # INUTILISE ......ztuple = (9,29,49,59,69,79,79,79,79,89,89,89,89,89,89) # Aligne les val ds la colonne 3 => xtuple[405] à D pour les gains par grille
+    larg_col_tuple = (76,94,71,135,85,140) # Largeur des col pour placer le txt (80,94,71,139,85,125)
 
     # for i in range(0, len(ytuple)): # CTRL de remplissage toutes les case pour test de validation des data
     #     for j in range(0, len(xtuple)):
@@ -475,7 +496,7 @@ updateTime() # Ne s'affiche pas pdt
 
 date = datetime.datetime.now().strftime('%d-%m-%Y %H:%M:%S')
 date = Label(fen, text="Résultat du tirage du :\n" + date, font=("Arial Black", 17), bg="#374C9D", fg='white')  # date heure mn s
-date.place(x=400, y=2) # ANC x=391, y=2
+date.place(x=480, y=2) # ANC x=391, y=2
 
 titre = Label(fen, text="Tirage supposé\ngagnant ", font=("Arial Black", 13), bg="white", fg='#374C9D')
 titre.place(x=4, y=78)  # en haut # titre.pack(expand=YES) # texte au millieu de la fenetre
@@ -490,8 +511,8 @@ txt_explicatif = ("Bienvenu dans ce PRG qui simule des tirages d'Euromillion.\nI
                   "Pour 10 000 000 d'essais la durée des calculs est d'environ 4mn.\nVous avez une chance de gagner sur 139 838 160"
                   "\nsoit une probabilité de 0,00000000715 de ganger le gros lot.")
 txt = Label(fen, text = txt_explicatif, font=("Arial Black", 10, "italic"), bg="white", fg='#374C9D' )
-txt.place(x = 10, y = 750)
-#________________________________________Affichage des gains pour une grille gagnante____________________________
+txt.place(x = 10, y = 746)
+#____________________COLONNE 3 ______Affichage des gains connus pour une grille gagnante____________________________
 for i in range(0, 15):  # Nb de lignes pour les grilles
     col = 3 # colonne d'affichage
     gain = format_float("%.2f" % gain_par_grille[0][i]) # "%.2f" % formate un fload à 2 décimales
